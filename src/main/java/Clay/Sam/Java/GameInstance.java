@@ -122,7 +122,7 @@ public class GameInstance implements Runnable {
 
     public static void movePaddle1(int direction) {
         if(direction == 1) {
-            if(paddle1Speed >= paddleMaxSpeed) {
+            if(paddle2Speed >= paddleMaxSpeed || paddle2Speed <= -paddleMaxSpeed) {
                 return;
             }
             paddle1Speed++;
@@ -133,13 +133,21 @@ public class GameInstance implements Runnable {
 
     public static void movePaddle2(int direction) {
         if(direction == 1) {
-            if(paddle2Speed >= paddleMaxSpeed) {
+            if(paddle2Speed >= paddleMaxSpeed || paddle2Speed <= -paddleMaxSpeed) {
                 return;
             }
             paddle2Speed++;
         } else {
             paddle2Speed--;
         }
+    }
+
+    public static void stopPanel1() {
+        paddle1Speed = 0;
+    }
+
+    public static void stopPanel2() {
+        paddle2Speed = 0;
     }
 
 }
