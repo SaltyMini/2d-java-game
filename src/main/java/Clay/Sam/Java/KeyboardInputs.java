@@ -18,7 +18,6 @@ public class KeyboardInputs {
             @Override
             public void actionPerformed(ActionEvent e) {
                 GameInstance.movePaddle1(1);
-                System.out.println("W");
             }
         });
 
@@ -43,6 +42,38 @@ public class KeyboardInputs {
             @Override
             public void actionPerformed(ActionEvent e) {
                 GameInstance.movePaddle2(-1);
+            }
+        });
+
+
+        setupKeyBinding(contentPane, KeyEvent.VK_W, "W_released", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameInstance.stopPanel1();
+            }
+        });
+
+        // Set up key bindings for S key
+        setupKeyBinding(contentPane, KeyEvent.VK_S, "S_released", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameInstance.stopPanel1();
+            }
+        });
+
+        // Set up key bindings for arrow up
+        setupKeyBinding(contentPane, KeyEvent.VK_UP, "UP_released", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameInstance.stopPanel2();
+            }
+        });
+
+        // Set up key bindings for arrow down
+        setupKeyBinding(contentPane, KeyEvent.VK_DOWN, "DOWN_released", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameInstance.stopPanel2();
             }
         });
 
