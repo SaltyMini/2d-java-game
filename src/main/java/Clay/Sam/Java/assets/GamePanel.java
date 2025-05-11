@@ -45,4 +45,8 @@ public class GamePanel extends JPanel {
         ballY = by;
         repaint();
     }
+
+    public int getPaddleHeight() {
+        return PADDLE_HEIGHT;
+    }
 }

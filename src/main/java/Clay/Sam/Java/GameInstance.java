@@ -29,10 +29,14 @@ public class GameInstance implements Runnable {
     private static int paddle2Speed = 0;
     private static int paddleMaxSpeed = 3;
 
+    private JFrame frame;
+
 
 
     private GameInstance() {
-        JFrame frame = Frame.getFrame();
+
+        frame = Frame.getFrame();
+
         KeyboardInputs keyboardInputs = new KeyboardInputs();
         keyboardInputs.inputs();
 
@@ -111,8 +115,51 @@ public class GameInstance implements Runnable {
 
         // deltaTime is the time passed since last update in seconds
     private void update(double deltaTime) {
+
+        // stops padels leaving the screen TODO:refractor for readability
+        int nextPaddle1Y = paddle1Y + paddle1Speed;
+        int nextPaddle2Y = paddle2Y + paddle2Speed;
+
+        // get game frame size
+        JFrame frame = Frame.getFrame();
+        int frameHeight = frame.getHeight();
+
+        int paddleHeight = gamePanel.getPaddleHeight();
+
+        // Check boundaries for paddle1
+        if (nextPaddle1Y >= 0 && nextPaddle1Y + paddleHeight <= frameHeight) {
+            paddle1Y = nextPaddle1Y;
+        } else {
+            // If we'd go out of bounds, stop at the boundary
+            if (nextPaddle1Y < 0) {
+                paddle1Y = 0;
+            } else if (nextPaddle1Y + paddleHeight > frameHeight) {
+                paddle1Y = frameHeight - paddleHeight;
+            }
+            paddle1Speed = 0;
+        }
+
+        // Check boundaries for paddle2
+        if (nextPaddle2Y >= 0 && nextPaddle2Y + paddleHeight <= frameHeight) {
+            paddle2Y = nextPaddle2Y;
+        } else {
+            // If we'd go out of bounds, stop at the boundary
+            if (nextPaddle2Y < 0) {
+                paddle2Y = 0;
+            } else if (nextPaddle2Y + paddleHeight > frameHeight) {
+                paddle2Y = frameHeight - paddleHeight;
+            }
+            paddle2Speed = 0;
+        }
+
+        // Ball movement logic would go here
+
+
         paddle1Y += paddle1Speed;
         paddle2Y += paddle2Speed;
+
+
+
     }
 
     private void render() {
