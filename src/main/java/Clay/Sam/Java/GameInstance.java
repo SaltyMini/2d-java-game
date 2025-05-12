@@ -28,7 +28,7 @@ public class GameInstance implements Runnable {
     private static double paddle1Velocity = 0;
     private static double paddle2Velocity = 0;
     private static final int paddleVelocityMax = 100;
-    private static final double paddleAcceleration = 35;
+    private static final double paddleAcceleration = 100;
 
     private static int paddle1Direction = 0;
     private static int paddle2Direction = 0;
@@ -144,6 +144,19 @@ public class GameInstance implements Runnable {
     }
 
 
+    private void ballCollision() {
+
+
+
+    }
+
+
+
+
+
+
+
+    //PADDELS
 
     public static void movePaddle1(int direction) {
 
