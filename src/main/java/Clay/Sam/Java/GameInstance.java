@@ -98,7 +98,7 @@ public class GameInstance implements Runnable {
         ballY = frame.getHeight() / 2;
 
         ballSpeedX = 1;
-        
+
     }
 
     @Override
@@ -162,10 +162,12 @@ public class GameInstance implements Runnable {
     private void ballCollision() {
 
         if(ballX < paddle1X && (ballY > paddle1Y && ballY < paddle1Y - gamePanel.getPaddleHeight())) {
+            ballSpeedX++;
             ballSpeedX = -ballSpeedX;
         }
 
         if(ballX > paddle2X && (ballY > paddle2Y && ballY < paddle2Y - gamePanel.getPaddleHeight())) {
+            ballSpeedX--;
             ballSpeedX = -ballSpeedX;
         }
 
