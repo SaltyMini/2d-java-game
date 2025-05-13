@@ -47,7 +47,6 @@ public class Frame {
         start.addActionListener(e -> {
             System.out.println("Button clicked!");
             GameInstance gameInstance = GameInstance.getInstance();
-            gameInstance.startGame();
         });
 
         return start;

@@ -39,20 +39,6 @@ public class GameInstance implements Runnable {
     private JFrame frame;
 
 
-
-    private GameInstance() {
-
-        frame = Frame.getFrame();
-
-        paddle1X = (int) (frame.getWidth() * 0.1);
-        paddle1Y = (int) (frame.getHeight() * 0.5);
-
-        paddle2Y = (int) (frame.getHeight() * 0.5);
-        paddle2X = (int) (frame.getWidth() * 0.9);
-
-        roundNumber = 0;
-    }
-
     public static GameInstance getInstance() {
         if (instance == null) {
             instance = new GameInstance();
@@ -60,25 +46,28 @@ public class GameInstance implements Runnable {
         return instance;
     }
 
+    private GameInstance() {
 
-    //TODO: refracter this into instance constructor... "private GameInstance()"
-    public void startGame() {
         gameRunning = true;
-        System.out.println("Game started");
 
-        JFrame frame = Frame.getFrame();
-        frame.getContentPane().removeAll();
-
+        frame = Frame.getFrame();
         gamePanel = new GamePanel();
 
-
+        frame.getContentPane().removeAll();
         gamePanel.setBounds(0, 0, frame.getWidth(), frame.getHeight());
 
         frame.setFocusable(true);
         gamePanel.setFocusable(true);
         gamePanel.requestFocus();
 
-        KeyboardInputs keyboardInputs = new KeyboardInputs();
+        paddle1X = (int) (frame.getWidth() * 0.1);
+        paddle1Y = (int) (frame.getHeight() * 0.5);
+
+        paddle2Y = (int) (frame.getHeight() * 0.5);
+        paddle2X = (int) (frame.getWidth() * 0.9);
+
+
+        KeyboardInputs keyboardInputs = new KeyboardInputs(this);
         keyboardInputs.inputs();
 
         frame.setLayout(new BorderLayout());
@@ -89,12 +78,27 @@ public class GameInstance implements Runnable {
         frame.repaint();
 
 
+        //TODO: round management
+        roundNumber = 0;
+
+
         //Start a new thread for game, this runs run()
         Thread gameThread = new Thread(this);
         gameThread.start();
+        System.out.println("creating gamethread: " + gameThread.getName());
     }
 
-    public void roundOver () {
+    //TODO: refracted this into instance constructor... "private GameInstance()"
+    private void startRound() {
+
+        ballX = frame.getWidth() / 2;
+        ballY = frame.getHeight() / 2;
+
+        ballVelocity = 1;
+
+    }
+
+    private void endRound() {
 
         gamePaused = true;
 
@@ -104,12 +108,7 @@ public class GameInstance implements Runnable {
 
     }
 
-    public void roundStart() {
-
-        ballX = frame.getWidth() / 2;
-        ballY = frame.getHeight() / 2;
-
-        ballVelocity = 1;
+    private void gameOver() {
 
     }
 
@@ -209,7 +208,7 @@ public class GameInstance implements Runnable {
 
 
 
-    //PADDELS
+    //PADDLES
 
     public static void movePaddle1(int direction) {
         paddle1Direction = direction;

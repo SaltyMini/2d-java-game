@@ -6,6 +6,17 @@ import java.awt.event.KeyEvent;
 
 public class KeyboardInputs {
 
+    private final GameInstance gameInstance;
+
+
+    public KeyboardInputs(GameInstance gameInstance) {
+        if (gameInstance == null) {
+            throw new IllegalArgumentException("GameInstance cannot be null.");
+        }
+        this.gameInstance = gameInstance;
+    }
+
+
     public void inputs() {
 
         JFrame frame = Frame.getFrame();
@@ -13,7 +24,7 @@ public class KeyboardInputs {
             throw new IllegalStateException("Frame is not initialized.");
         }
 
-        GameInstance gameInstance = GameInstance.getInstance();
+
 
         JPanel contentPane = (JPanel) frame.getContentPane();
 
