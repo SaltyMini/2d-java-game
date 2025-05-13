@@ -9,6 +9,7 @@ public class GameInstance implements Runnable {
 
     private static GameInstance instance; //Making this a singleton so only one instance ever
     boolean gameRunning = false;
+    boolean gamePaused = false;
 
     private int score = 0;
 
@@ -22,8 +23,8 @@ public class GameInstance implements Runnable {
 
     private int ballX = 200;
     private int ballY = 200;
-    private float ballSpeedX = 5;
-    private float ballSpeedY = 5;
+    private float ballVelocity = 5;
+    private float ballAngleRadians = 5;
 
     private static double paddle1Velocity = 0;
     private static double paddle2Velocity = 0;
@@ -60,6 +61,7 @@ public class GameInstance implements Runnable {
     }
 
 
+    //TODO: refracter this into instance constructor... "private GameInstance()"
     public void startGame() {
         gameRunning = true;
         System.out.println("Game started");
@@ -92,12 +94,22 @@ public class GameInstance implements Runnable {
         gameThread.start();
     }
 
+    public void roundOver () {
+
+        gamePaused = true;
+
+        /// /TODO implement
+        //       <team> wins
+        // Press any key to continue
+
+    }
+
     public void roundStart() {
 
         ballX = frame.getWidth() / 2;
         ballY = frame.getHeight() / 2;
 
-        ballSpeedX = 1;
+        ballVelocity = 1;
 
     }
 
@@ -119,8 +131,8 @@ public class GameInstance implements Runnable {
 
                 lastUpdateTime = currentTime;
             } else {
-                // Sleep a bit to avoid CPU hogging
                 try {
+                // Sleep a bit to avoid CPU hogging
                     Thread.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -133,6 +145,10 @@ public class GameInstance implements Runnable {
         // deltaTime is the time passed since last update in seconds
     private void update(double deltaTime) {
 
+        if(gamePaused) {
+            return;
+        }
+
         paddle1Velocity += (paddleAcceleration * paddle1Direction) * deltaTime;
 
         if (Math.abs(paddle1Velocity) > paddleVelocityMax) {
@@ -141,14 +157,14 @@ public class GameInstance implements Runnable {
 
         paddle1Y += paddle1Velocity * deltaTime;
 
-
-
-        System.out.println("Paddle Y: " + paddle1Y);
-        System.out.println("velocity: " + paddle1Velocity);
+        //System.out.println("velocity: " + paddle1Velocity);
+        //System.out.println("Paddle Y: " + paddle1Y);
 
         paddle1Y = Math.max(0, Math.min(paddle1Y, gamePanel.getHeight() - 100));
         paddle2Y = Math.max(0, Math.min(paddle2Y, gamePanel.getHeight() - 100));
 
+        System.out.println("Ball Velocity: " + ballVelocity);
+        updateBallPosition(deltaTime);
         ballCollision();
 
     }
@@ -158,17 +174,30 @@ public class GameInstance implements Runnable {
         gamePanel.repaint();
     }
 
+    public void updateBallPosition(double deltaTime) {
+
+        int deltaX = (int) (ballVelocity * Math.cos(ballAngleRadians) * deltaTime);
+        int deltaY = (int) (ballVelocity * Math.sin(ballAngleRadians) * deltaTime);
+
+        // Update the ball's position
+        ballX += deltaX;
+        ballY += deltaY;
+
+        gamePanel.updateBallPosition(ballX, ballY);
+
+    }
+
 
     private void ballCollision() {
 
         if(ballX < paddle1X && (ballY > paddle1Y && ballY < paddle1Y - gamePanel.getPaddleHeight())) {
-            ballSpeedX++;
-            ballSpeedX = -ballSpeedX;
+            ballVelocity++;
+            ballVelocity = -ballVelocity;
         }
 
         if(ballX > paddle2X && (ballY > paddle2Y && ballY < paddle2Y - gamePanel.getPaddleHeight())) {
-            ballSpeedX--;
-            ballSpeedX = -ballSpeedX;
+            ballVelocity--;
+            ballVelocity = -ballVelocity;
         }
 
 
@@ -183,9 +212,7 @@ public class GameInstance implements Runnable {
     //PADDELS
 
     public static void movePaddle1(int direction) {
-
         paddle1Direction = direction;
-
     }
 
     public static void movePaddle2(int direction) {
