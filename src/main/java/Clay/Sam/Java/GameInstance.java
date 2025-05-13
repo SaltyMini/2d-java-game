@@ -33,6 +33,8 @@ public class GameInstance implements Runnable {
     private static int paddle1Direction = 0;
     private static int paddle2Direction = 0;
 
+    private static int roundNumber;
+
     private JFrame frame;
 
 
@@ -46,6 +48,8 @@ public class GameInstance implements Runnable {
 
         paddle2Y = (int) (frame.getHeight() * 0.5);
         paddle2X = (int) (frame.getWidth() * 0.9);
+
+        roundNumber = 0;
     }
 
     public static GameInstance getInstance() {
@@ -86,6 +90,15 @@ public class GameInstance implements Runnable {
         //Start a new thread for game, this runs run()
         Thread gameThread = new Thread(this);
         gameThread.start();
+    }
+
+    public void roundStart() {
+
+        ballX = frame.getWidth() / 2;
+        ballY = frame.getHeight() / 2;
+
+        ballSpeedX = 1;
+        
     }
 
     @Override
@@ -136,6 +149,8 @@ public class GameInstance implements Runnable {
         paddle1Y = Math.max(0, Math.min(paddle1Y, gamePanel.getHeight() - 100));
         paddle2Y = Math.max(0, Math.min(paddle2Y, gamePanel.getHeight() - 100));
 
+        ballCollision();
+
     }
 
     private void render() {
@@ -146,6 +161,13 @@ public class GameInstance implements Runnable {
 
     private void ballCollision() {
 
+        if(ballX < paddle1X && (ballY > paddle1Y && ballY < paddle1Y - gamePanel.getPaddleHeight())) {
+            ballSpeedX = -ballSpeedX;
+        }
+
+        if(ballX > paddle2X && (ballY > paddle2Y && ballY < paddle2Y - gamePanel.getPaddleHeight())) {
+            ballSpeedX = -ballSpeedX;
+        }
 
 
     }
