@@ -23,7 +23,7 @@ public class GameInstance implements Runnable {
 
     private int ballX = 200;
     private int ballY = 200;
-    private float ballVelocity = 5;
+    private float ballVelocity = 300;
     private float ballAngleRadians = 5;
 
     private static double paddle1Velocity = 0;
@@ -125,6 +125,7 @@ public class GameInstance implements Runnable {
             long elapsedTime = currentTime - lastUpdateTime;
 
             if (elapsedTime >= targetFrameTime) {
+                //System.out.println("Tick time " + elapsedTime / 1000);
                 update(elapsedTime / 1000.0); // Pass elapsed time in seconds
                 render();
 
@@ -144,9 +145,7 @@ public class GameInstance implements Runnable {
         // deltaTime is the time passed since last update in seconds
     private void update(double deltaTime) {
 
-        if(gamePaused) {
-            return;
-        }
+        //System.out.println("DeltaTime: " + deltaTime);
 
         if (paddle1Direction != 0) {
             paddle1Velocity += (paddleAcceleration * paddle1Direction) * deltaTime;
@@ -162,19 +161,16 @@ public class GameInstance implements Runnable {
             }
         }
 
-// Update the paddle's Y position
         paddle1Y += paddle1Velocity * deltaTime;
-
-
-        //System.out.println("velocity: " + paddle1Velocity);
-        //System.out.println("Paddle Y: " + paddle1Y);
 
         paddle1Y = Math.max(0, Math.min(paddle1Y, gamePanel.getHeight() - 100));
         paddle2Y = Math.max(0, Math.min(paddle2Y, gamePanel.getHeight() - 100));
 
-        System.out.println("Ball Velocity: " + ballVelocity);
-        updateBallPosition(deltaTime);
+        //System.out.println("BallX: " + ballX);
+
+        //System.out.println("Ball Velocity: " + ballVelocity);
         ballCollision();
+        updateBallPosition(deltaTime);
 
     }
 
@@ -185,21 +181,20 @@ public class GameInstance implements Runnable {
 
     public void updateBallPosition(double deltaTime) {
 
-        int deltaX = (int) (ballVelocity * Math.cos(ballAngleRadians) * deltaTime);
-        int deltaY = (int) (ballVelocity * Math.sin(ballAngleRadians) * deltaTime);
-        
-
-        // Update the ball's position
         ballX += (int) (ballVelocity * Math.cos(ballAngleRadians) * deltaTime);
         ballY += (int) (ballVelocity * Math.sin(ballAngleRadians) * deltaTime);
 
-
         gamePanel.updateBallPosition(ballX, ballY);
-
     }
 
 
     private void ballCollision() {
+
+        if(ballX < frame.getHeight() || ballX > frame.getHeight() - 10) {
+            System.out.println("Ball hit wall");
+            ballAngleRadians = (float) Math.sin(ballAngleRadians);
+            ballVelocity = -ballVelocity;
+        }
 
         if(ballX < paddle1X && (ballY > paddle1Y && ballY < paddle1Y - gamePanel.getPaddleHeight())) {
             ballVelocity++;
