@@ -28,7 +28,7 @@ public class GameInstance implements Runnable {
 
     private static double paddle1Velocity = 0;
     private static double paddle2Velocity = 0;
-    private static final int paddleVelocityMax = 100;
+    private static final int paddleVelocityMax = 250;
     private static final double paddleAcceleration = 100;
 
     private static int paddle1Direction = 0;
@@ -148,13 +148,23 @@ public class GameInstance implements Runnable {
             return;
         }
 
-        paddle1Velocity += (paddleAcceleration * paddle1Direction) * deltaTime;
+        if (paddle1Direction != 0) {
+            paddle1Velocity += (paddleAcceleration * paddle1Direction) * deltaTime;
 
-        if (Math.abs(paddle1Velocity) > paddleVelocityMax) {
-            paddle1Velocity = Math.signum(paddle1Velocity) * paddleVelocityMax;
+            if (Math.abs(paddle1Velocity) > paddleVelocityMax) {
+                paddle1Velocity = Math.signum(paddle1Velocity) * paddleVelocityMax;
+            }
+        } else {
+            paddle1Velocity *= 0.9; // 0.9 is the damping factor, adjust for stronger/weaker damping
+
+            if (Math.abs(paddle1Velocity) < 0.1) {
+                paddle1Velocity = 0;
+            }
         }
 
+// Update the paddle's Y position
         paddle1Y += paddle1Velocity * deltaTime;
+
 
         //System.out.println("velocity: " + paddle1Velocity);
         //System.out.println("Paddle Y: " + paddle1Y);
@@ -177,10 +187,12 @@ public class GameInstance implements Runnable {
 
         int deltaX = (int) (ballVelocity * Math.cos(ballAngleRadians) * deltaTime);
         int deltaY = (int) (ballVelocity * Math.sin(ballAngleRadians) * deltaTime);
+        
 
         // Update the ball's position
-        ballX += deltaX;
-        ballY += deltaY;
+        ballX += (int) (ballVelocity * Math.cos(ballAngleRadians) * deltaTime);
+        ballY += (int) (ballVelocity * Math.sin(ballAngleRadians) * deltaTime);
+
 
         gamePanel.updateBallPosition(ballX, ballY);
 
@@ -220,11 +232,9 @@ public class GameInstance implements Runnable {
 
     public static void stopPanel1() {
         paddle1Direction = 0;
-        paddle1Velocity = 0;
     }
 
     public static void stopPanel2() {
-        paddle2Velocity = 0;
         paddle2Direction = 0;
     }
 
