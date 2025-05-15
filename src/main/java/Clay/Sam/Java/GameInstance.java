@@ -29,7 +29,7 @@ public class GameInstance implements Runnable {
     private static double paddle1Velocity = 0;
     private static double paddle2Velocity = 0;
     private static final int paddleVelocityMax = 100;
-    private static final double paddleAcceleration = 100;
+    private static final double paddleAcceleration = 100;  //gets * by deltaTIme which is 0.016
 
     private static int paddle1Direction = 0;
     private static int paddle2Direction = 0;
