@@ -36,6 +36,10 @@ public class GamePanel extends JPanel {
         g2d.fillOval(ballX, ballY, BALL_DIAMETER, BALL_DIAMETER);
     }
 
+    public void defaultSize() {
+        setPreferredSize(new Dimension(1280, 720));
+    }
+
     public void updatePositions(int p1x, int p1y, int p2x, int p2y, int bx, int by) {
         paddle1X = p1x;
         paddle1Y = p1y;

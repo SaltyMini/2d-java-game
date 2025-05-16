@@ -22,8 +22,8 @@ public class GameInstance implements Runnable {
     private int paddle2X = 350;
     private static double paddle2Y = 100;
 
-    private int ballX = 200;
-    private int ballY = 200;
+    private int ballX = 300;
+    private int ballY = 700;
     private float ballVelocity = 300;
     private double ballAngle = 20; // in degrees
     private final int ballRadius;
@@ -143,6 +143,9 @@ public class GameInstance implements Runnable {
             if (elapsedTime >= targetFrameTime) {
                 //System.out.println("Tick time " + elapsedTime / 1000);
                 update(elapsedTime / 1000.0); // Pass elapsed time in seconds
+                if(elapsedTime / 1000.0 > 0.02) {
+                    System.out.println("Long tick: " + elapsedTime / 1000.0);
+                }
                 render();
 
                 lastUpdateTime = currentTime;
@@ -222,7 +225,7 @@ public class GameInstance implements Runnable {
     public void ballAngleCheck() {
 
         //adds veriation to each shot
-        int randomNum = ThreadLocalRandom.current().nextInt(10, 20 + 1);
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 20 + 1);
 
         //4/30 chance to be massivle angle change
         if(randomNum < 4) {
@@ -234,15 +237,15 @@ public class GameInstance implements Runnable {
                 || 75 <= ballAngle && ballAngle <= 105
                 || 165 <= ballAngle && ballAngle <= 195
                 || 255 <= ballAngle && ballAngle <= 285) {
-            int srandomNum = ThreadLocalRandom.current().nextInt(10, 30 + 1);
+            int randomNum1 = ThreadLocalRandom.current().nextInt(10, 30 + 1);
             if(ballAngle > 0) {
-                ballAngle = +randomNum;
+                ballAngle = +randomNum1;
                 return;
             } else if(ballAngle < 0) {
-                ballAngle = -randomNum;
+                ballAngle = -randomNum1;
                 return;
             } else {
-                ballAngle = randomNum;
+                ballAngle = randomNum1;
                 return;
             }
         }
@@ -253,10 +256,8 @@ public class GameInstance implements Runnable {
         } else if(ballAngle < 0) {
             ballAngle = -randomNum;
             return;
-        } else {
-            ballAngle = randomNum;
-            return;
         }
+
 
     }
 
