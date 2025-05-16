@@ -24,7 +24,7 @@ public class GameInstance implements Runnable {
     private int ballX = 200;
     private int ballY = 200;
     private float ballVelocity = 300;
-    private float ballAngleRadians = 5;
+    private double ballAngleRadians = Math.toRadians(0); // 45 degrees in radians
 
     private static double paddle1Velocity = 0;
     private static double paddle2Velocity = 0;
@@ -190,10 +190,17 @@ public class GameInstance implements Runnable {
 
     private void ballCollision() {
 
-        if(ballX < frame.getHeight() || ballX > frame.getHeight() - 10) {
+        System.out.println("BallX: " + ballX);
+
+        if(ballX < (0.1 * frame.getWidth()) || ballX > (0.9 * frame.getWidth())) {
             System.out.println("Ball hit wall");
-            ballAngleRadians = (float) Math.sin(ballAngleRadians);
-            ballVelocity = -ballVelocity;
+            ballAngleRadians = -ballAngleRadians;
+        }
+
+        if(ballY < (0.1 * frame.getHeight()) || ballY > (0.95 * frame.getHeight())) {
+            System.out.println("Ball hit wall");
+            ballAngleRadians = -ballAngleRadians;
+
         }
 
         if(ballX < paddle1X && (ballY > paddle1Y && ballY < paddle1Y - gamePanel.getPaddleHeight())) {
