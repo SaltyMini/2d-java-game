@@ -10,8 +10,8 @@ public class GamePanel extends JPanel {
     private int paddle2X, paddle2Y;
     private int ballX, ballY;
 
-    private final int PADDLE_WIDTH = 30;
-    private final int PADDLE_HEIGHT = 100;
+    private final int PADDLE_WIDTH = 10;
+    private final int PADDLE_HEIGHT = 150;
     private final int BALL_DIAMETER = 20;
 
     public GamePanel() {
@@ -54,5 +54,13 @@ public class GamePanel extends JPanel {
 
     public int getPaddleHeight() {
         return PADDLE_HEIGHT;
+    }
+
+    public int getBallRadius() {
+        return BALL_DIAMETER / 2;
+    }
+
+    public int getPaddleWidth() {
+        return PADDLE_WIDTH;
     }
 }
