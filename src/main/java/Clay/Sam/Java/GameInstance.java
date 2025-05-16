@@ -31,7 +31,7 @@ public class GameInstance implements Runnable {
     private static double paddle1Velocity = 0;
     private static double paddle2Velocity = 0;
     private static final int paddleVelocityMax = 100;
-    private static final double paddleAcceleration = 100;  //gets * by deltaTIme which is 0.016
+    private static double paddleAcceleration = 100;  //gets * by deltaTIme which is 0.016
 
     private int paddleWidth = 30;
 
@@ -101,6 +101,7 @@ public class GameInstance implements Runnable {
         ballAngle = ThreadLocalRandom.current().nextInt(10, 360 + 1);
         ballVelocity = 430;
         paddle1Velocity = 240;
+        paddleAcceleration = 150;
     }
 
     //TODO: refracted this into instance constructor... "private GameInstance()"
@@ -169,14 +170,29 @@ public class GameInstance implements Runnable {
                 paddle1Velocity = Math.signum(paddle1Velocity) * paddleVelocityMax;
             }
         } else {
-            paddle1Velocity *= 0.9; // 0.9 is the damping factor, adjust for stronger/weaker damping
+            paddle1Velocity *= 0.8; // 0.9 is the damping factor, adjust for stronger/weaker damping
 
             if (Math.abs(paddle1Velocity) < 0.1) {
                 paddle1Velocity = 0;
             }
         }
 
+        if (paddle2Direction != 0) {
+            paddle2Velocity += (paddleAcceleration * paddle2Direction) * deltaTime;
+
+            if (Math.abs(paddle2Velocity) > paddleVelocityMax) {
+                paddle2Velocity = Math.signum(paddle2Velocity) * paddleVelocityMax;
+            }
+        } else {
+            paddle2Velocity *= 0.8; // 0.9 is the damping factor, adjust for stronger/weaker damping
+
+            if (Math.abs(paddle2Velocity) < 0.1) {
+                paddle2Velocity = 0;
+            }
+        }
+
         paddle1Y += paddle1Velocity * deltaTime;
+        paddle2Y += paddle2Velocity * deltaTime;
 
         paddle1Y = Math.max(0, Math.min(paddle1Y, gamePanel.getHeight() - 100));
         paddle2Y = Math.max(0, Math.min(paddle2Y, gamePanel.getHeight() - 100));
@@ -185,6 +201,7 @@ public class GameInstance implements Runnable {
 
         //System.out.println("Ball Velocity: " + ballVelocity);
         updateBallPosition(deltaTime);
+        ballAngleCheck();
         ballCollision();
 
     }
@@ -202,21 +219,50 @@ public class GameInstance implements Runnable {
         gamePanel.updateBallPosition(ballX, ballY);
     }
 
+    public void ballAngleCheck() {
+
+        //adds veriation to each shot
+        int randomNum = ThreadLocalRandom.current().nextInt(10, 20 + 1);
+
+        //4/30 chance to be massivle angle change
+        if(randomNum < 4) {
+            randomNum = 30;
+        }
+
+        //checks for the near dead angle within +- 15 degrees
+        if(30 <= ballAngle && ballAngle <= 60
+                || 75 <= ballAngle && ballAngle <= 105
+                || 165 <= ballAngle && ballAngle <= 195
+                || 255 <= ballAngle && ballAngle <= 285) {
+            int srandomNum = ThreadLocalRandom.current().nextInt(10, 30 + 1);
+            if(ballAngle > 0) {
+                ballAngle = +randomNum;
+                return;
+            } else if(ballAngle < 0) {
+                ballAngle = -randomNum;
+                return;
+            } else {
+                ballAngle = randomNum;
+                return;
+            }
+        }
+            //^^ achives the same as above, leaving both in as i don't understand this
+        if(ballAngle > 0) {
+            ballAngle = +randomNum;
+            return;
+        } else if(ballAngle < 0) {
+            ballAngle = -randomNum;
+            return;
+        } else {
+            ballAngle = randomNum;
+            return;
+        }
+
+    }
 
     private void ballCollision() {
 
         //System.out.println("BallX: " + ballX);
-
-        if(ballAngle == 45 || ballAngle == 90 || ballAngle == 180 || ballAngle == 270) {
-            int randomNum = ThreadLocalRandom.current().nextInt(30, 50 + 1);
-            if(ballAngle > 0) {
-                ballAngle = -randomNum;
-            } else if(ballAngle < 0) {
-                ballAngle = randomNum;
-            } else {
-                ballAngle = randomNum;
-            }
-        }
 
         if(ballX < (0.1 * frame.getWidth()) || ballX > (0.9 * frame.getWidth())) {
             System.out.println("Ball hit wall1");
