@@ -4,6 +4,7 @@ package Clay.Sam.Java;
 import Clay.Sam.Java.assets.GamePanel;
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GameInstance implements Runnable {
 
@@ -24,12 +25,15 @@ public class GameInstance implements Runnable {
     private int ballX = 200;
     private int ballY = 200;
     private float ballVelocity = 300;
-    private double ballAngleRadians = Math.toRadians(0); // 45 degrees in radians
+    private double ballAngle = 20; // in degrees
+    private final int ballRadius;
 
     private static double paddle1Velocity = 0;
     private static double paddle2Velocity = 0;
     private static final int paddleVelocityMax = 100;
     private static final double paddleAcceleration = 100;  //gets * by deltaTIme which is 0.016
+
+    private int paddleWidth = 30;
 
     private static int paddle1Direction = 0;
     private static int paddle2Direction = 0;
@@ -48,6 +52,7 @@ public class GameInstance implements Runnable {
 
     private GameInstance() {
 
+
         gameRunning = true;
 
         frame = Frame.getFrame();
@@ -60,12 +65,15 @@ public class GameInstance implements Runnable {
         gamePanel.setFocusable(true);
         gamePanel.requestFocus();
 
+
         paddle1X = (int) (frame.getWidth() * 0.1);
         paddle1Y = (int) (frame.getHeight() * 0.5);
 
         paddle2Y = (int) (frame.getHeight() * 0.5);
         paddle2X = (int) (frame.getWidth() * 0.9);
 
+        ballRadius = gamePanel.getBallRadius();
+        paddleWidth = gamePanel.getPaddleWidth();
 
         KeyboardInputs keyboardInputs = new KeyboardInputs(this);
         keyboardInputs.inputs();
@@ -86,6 +94,13 @@ public class GameInstance implements Runnable {
         Thread gameThread = new Thread(this);
         gameThread.start();
         System.out.println("creating gamethread: " + gameThread.getName());
+
+
+
+        //TESTING STUFF TO BE REMOVED
+        ballAngle = ThreadLocalRandom.current().nextInt(10, 360 + 1);
+        ballVelocity = 430;
+        paddle1Velocity = 240;
     }
 
     //TODO: refracted this into instance constructor... "private GameInstance()"
@@ -169,8 +184,8 @@ public class GameInstance implements Runnable {
         //System.out.println("BallX: " + ballX);
 
         //System.out.println("Ball Velocity: " + ballVelocity);
-        ballCollision();
         updateBallPosition(deltaTime);
+        ballCollision();
 
     }
 
@@ -181,8 +196,8 @@ public class GameInstance implements Runnable {
 
     public void updateBallPosition(double deltaTime) {
 
-        ballX += (int) (ballVelocity * Math.cos(ballAngleRadians) * deltaTime);
-        ballY += (int) (ballVelocity * Math.sin(ballAngleRadians) * deltaTime);
+        ballX += (int) (ballVelocity * Math.cos(Math.toRadians(ballAngle)) * deltaTime);
+        ballY += (int) (ballVelocity * Math.sin(Math.toRadians(ballAngle)) * deltaTime);
 
         gamePanel.updateBallPosition(ballX, ballY);
     }
@@ -190,27 +205,48 @@ public class GameInstance implements Runnable {
 
     private void ballCollision() {
 
-        System.out.println("BallX: " + ballX);
+        //System.out.println("BallX: " + ballX);
+
+        if(ballAngle == 45 || ballAngle == 90 || ballAngle == 180 || ballAngle == 270) {
+            int randomNum = ThreadLocalRandom.current().nextInt(30, 50 + 1);
+            if(ballAngle > 0) {
+                ballAngle = -randomNum;
+            } else if(ballAngle < 0) {
+                ballAngle = randomNum;
+            } else {
+                ballAngle = randomNum;
+            }
+        }
 
         if(ballX < (0.1 * frame.getWidth()) || ballX > (0.9 * frame.getWidth())) {
-            System.out.println("Ball hit wall");
-            ballAngleRadians = -ballAngleRadians;
-        }
-
-        if(ballY < (0.1 * frame.getHeight()) || ballY > (0.95 * frame.getHeight())) {
-            System.out.println("Ball hit wall");
-            ballAngleRadians = -ballAngleRadians;
+            System.out.println("Ball hit wall1");
+            ballAngle = Math.toDegrees(Math.PI - Math.toRadians(ballAngle));
 
         }
 
-        if(ballX < paddle1X && (ballY > paddle1Y && ballY < paddle1Y - gamePanel.getPaddleHeight())) {
-            ballVelocity++;
-            ballVelocity = -ballVelocity;
+        if(ballY < (0.1 * frame.getHeight()) || ballY > (0.9 * frame.getHeight())) {
+            System.out.println("Ball hit wall2");
+            ballAngle = -ballAngle;
+
+
+        }
+
+        if (ballX - ballRadius <= paddle1X + paddleWidth &&
+                ballX + ballRadius >= paddle1X &&
+                ballY + ballRadius >= paddle1Y &&
+                ballY - ballRadius <= paddle1Y + paddleWidth) {
+
+            System.out.println("Ball hit paddle1");
+
+            ballAngle = 180 - ballAngle;
+
+            ballVelocity += 10;
         }
 
         if(ballX > paddle2X && (ballY > paddle2Y && ballY < paddle2Y - gamePanel.getPaddleHeight())) {
-            ballVelocity--;
-            ballVelocity = -ballVelocity;
+            System.out.println("Ball hit paddle2");
+            ballAngle = Math.toDegrees(Math.PI - Math.toRadians(ballAngle));
+            ballVelocity -= 10;
         }
 
 
