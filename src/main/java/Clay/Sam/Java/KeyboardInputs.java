@@ -74,7 +74,7 @@ public class KeyboardInputs {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (gameInstance != null) {
-                    GameInstance.movePaddle2(1);
+                    GameInstance.movePaddle2(-1);
                 }
             }
         });
@@ -93,7 +93,7 @@ public class KeyboardInputs {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (gameInstance != null) {
-                    GameInstance.movePaddle2(-1);
+                    GameInstance.movePaddle2(1);
                 }
             }
         });
